@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica de la Parábola</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.24.2/plotly.min.js"></script>
+    <style>
+        :root {
+            --main-color: #3498db;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--main-color);
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .formulas {
+            margin-bottom: 20px;
+        }
+        
+        .formula {
+            margin: 15px 0;
+        }
+        
+        .formula-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.1em;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid var(--main-color);
+        }
+        
+        #formulaEstudiante {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.8;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .control-item {
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .evaluation {
+            margin-top: 20px;
+        }
+        
+        .plots {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .plot {
+            height: 300px;
+            width: 100%;
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .result-section {
+            margin-bottom: 15px;
+        }
+        
+        .result-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .result-value {
+            color: #e74c3c;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+        }
+        
+        .interval-display {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Gráfica de la Parábola</h1>
+    </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="card formulas">
+                <div class="formula">
+                    <p>Parábola fórmula general:</p>
+                    <p class="formula-text">y = f(x) = Ax² + Bx + C</p>
+                </div>
+                <div class="formula">
+                    <p>Expresión cuadrática:</p>
+                    <p class="formula-text">Ax² + Bx + C</p>
+                </div>
+                <div class="formula">
+                    <p>Ecuación cuadrática:</p>
+                    <p class="formula-text">Ax² + Bx + C = 0</p>
+                </div>
+                <div class="formula">
+                    <p>Fórmula del Discriminante:</p>
+                    <p class="formula-text">D = B² - 4AC</p>
+                </div>
+                <div class="formula">
+                    <p>Fórmula del estudiante:</p>
+                    <p class="formula-text">x = (-B ± √(B² - 4AC)) / (2A)</p>
+                </div>
+            </div>
+            
+            <div class="card controls">
+                <div class="control-item">
+                    <label for="coefA">Coeficiente A:</label>
+                    <input type="number" id="coefA" value="3" min="-50" max="50" step="1">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-item">
+                        <label for="coefB">Coeficiente B:</label>
+                        <input type="number" id="coefB" value="3" min="-50" max="50" step="1">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="coefC">Coeficiente C:</label>
+                        <input type="number" id="coefC" value="-2" min="-50" max="50" step="1">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-item">
+                        <label for="minX">Intervalo mínimo:</label>
+                        <input type="number" id="minX" value="-3" min="-100" max="100" step="1">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="maxX">Intervalo máximo:</label>
+                        <input type="number" id="maxX" value="2" min="-100" max="100" step="1">
+                    </div>
+                </div>
+                
+                <div class="evaluation">
+                    <label for="evalX">Evaluar en x = x₀:</label>
+                    <input type="number" id="evalX" value="0" min="-50" max="50" step="1">
+                    <div id="evaluationResult" class="interval-display"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="plots">
+                <div class="card">
+                    <div id="parabolaPlot" class="plot"></div>
+                </div>
+                
+                <div class="card results">
+                    <div class="result-section">
+                        <div class="result-title">Ecuación Cuadrática</div>
+                        <div id="ecuacion" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Discriminante</div>
+                        <div id="discriminante" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Evaluación en x = x₀</div>
+                        <div id="evaluacion" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Vértice</div>
+                        <div id="vertice" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Soluciones Reales</div>
+                        <div id="solucionesReales" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Soluciones Complejas</div>
+                        <div id="solucionesComplejas" class="result-value"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="result-title">Sustitución en la fórmula del estudiante</div>
+                        <div id="formulaEstudiante" class="result-value"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para obtener el signo como texto
+        function signob(x) {
+            return x < 0 ? " - " : " + ";
+        }
+        
+        // Funciones para calcular las raíces y otros valores
+        function calcularValores() {
+            const A = parseFloat(document.getElementById('coefA').value);
+            const B = parseFloat(document.getElementById('coefB').value);
+            const C = parseFloat(document.getElementById('coefC').value);
+            const xEval = parseFloat(document.getElementById('evalX').value);
+            const minX = parseFloat(document.getElementById('minX').value);
+            const maxX = parseFloat(document.getElementById('maxX').value);
+            
+            // Calcular el discriminante
+            const D = B * B - 4 * A * C;
+            
+            // Calcular el vértice
+            const Vpx = -B / (2 * A);
+            const Vpy = -D / (4 * A);
+            
+            // Calcular las raíces
+            let raices = {};
+            if (D >= 0) {
+                raices.real1 = (-B + Math.sqrt(D)) / (2 * A);
+                raices.real2 = (-B - Math.sqrt(D)) / (2 * A);
+                raices.tieneReales = true;
+                raices.tieneComplejas = false;
+            } else {
+                const realPart = -B / (2 * A);
+                const imagPart = Math.sqrt(-D) / (2 * A);
+                raices.compleja1 = {
+                    real: realPart,
+                    imag: imagPart
+                };
+                raices.compleja2 = {
+                    real: realPart,
+                    imag: -imagPart
+                };
+                raices.tieneReales = false;
+                raices.tieneComplejas = true;
+            }
+            
+            // Calcular el valor para x = x₀
+            const yEval = A * xEval * xEval + B * xEval + C;
+            
+            return {
+                A, B, C, D, Vpx, Vpy, raices, yEval, xEval, minX, maxX
+            };
+        }
+        
+        // Función para actualizar la gráfica
+        function actualizarGrafica() {
+            const valores = calcularValores();
+            const { A, B, C, D, Vpx, Vpy, raices, minX, maxX } = valores;
+            
+            // Crear datos para la gráfica
+            const puntos = 500;
+            const paso = (maxX - minX) / puntos;
+            
+            let x = [];
+            let y = [];
+            
+            for (let i = 0; i <= puntos; i++) {
+                const xi = minX + i * paso;
+                const yi = A * xi * xi + B * xi + C;
+                x.push(xi);
+                y.push(yi);
+            }
+            
+            // Determinar un límite y razonable basado en los valores
+            const yValues = y.filter(val => !isNaN(val) && isFinite(val));
+            const yMin = Math.min(...yValues);
+            const yMax = Math.max(...yValues);
+            const yRange = yMax - yMin;
+            const yBuffer = yRange * 0.2; // 20% de margen
+            const yMinPlot = yMin - yBuffer;
+            const yMaxPlot = yMax + yBuffer;
+            
+            // Preparar los datos de la traza principal (parábola)
+            const trace1 = {
+                x: x,
+                y: y,
+                mode: 'lines',
+                name: 'f(x)',
+                line: {
+                    color: '#3498db',
+                    width: 3
+                }
+            };
+            
+            // Eje X
+            const traceX = {
+                x: [minX, maxX],
+                y: [0, 0],
+                mode: 'lines',
+                name: 'Eje X',
+                line: {
+                    color: '#e74c3c',
+                    width: 2
+                }
+            };
+            
+            // Eje Y
+            const traceY = {
+                x: [0, 0],
+                y: [yMinPlot, yMaxPlot],
+                mode: 'lines',
+                name: 'Eje Y',
+                line: {
+                    color: '#e74c3c',
+                    width: 2
+                }
+            };
+            
+            // Vértice
+            const traceVertice = {
+                x: [Vpx],
+                y: [Vpy],
+                mode: 'markers+text',
+                name: 'Vértice',
+                text: ['V'],
+                textposition: 'top',
+                marker: {
+                    color: '#9b59b6',
+                    size: 10,
+                    symbol: 'circle'
+                }
+            };
+            
+            // Configuración del diseño
+            let data = [trace1, traceX, traceY, traceVertice];
+            
+            // Agregar raíces reales si existen
+            if (raices.tieneReales) {
+                const traceRaices = {
+                    x: [raices.real1, raices.real2],
+                    y: [0, 0],
+                    mode: 'markers',
+                    name: 'Raíces',
+                    marker: {
+                        color: '#2ecc71',
+                        size: 10,
+                        symbol: 'circle'
+                    }
+                };
+                data.push(traceRaices);
+            }
+            
+            const layout = {
+                title: `Vértice = (${Vpx.toFixed(3)}, ${Vpy.toFixed(3)})`,
+                xaxis: {
+                    title: 'x',
+                    zeroline: false
+                },
+                yaxis: {
+                    title: 'y',
+                    range: [yMinPlot, yMaxPlot],
+                    zeroline: false
+                },
+                showlegend: false,
+                margin: {
+                    l: 50,
+                    r: 50,
+                    b: 50,
+                    t: 50,
+                    pad: 4
+                },
+                hovermode: 'closest',
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: '#f8f9fa'
+            };
+            
+            Plotly.newPlot('parabolaPlot', data, layout);
+        }
+        
+        // Función para actualizar los resultados de texto
+        function actualizarResultados() {
+            const valores = calcularValores();
+            const { A, B, C, D, Vpx, Vpy, raices, yEval, xEval } = valores;
+            
+            // Mostrar ecuación cuadrática
+            let ecuacion = `${A}x² `;
+            ecuacion += B < 0 ? "- " + Math.abs(B) + "x " : "+ " + B + "x ";
+            ecuacion += C < 0 ? "- " + Math.abs(C) + " = 0" : "+ " + C + " = 0";
+            document.getElementById('ecuacion').textContent = ecuacion;
+            
+            // Mostrar discriminante
+            document.getElementById('discriminante').textContent = 
+                `D = ${D} = (${B})² - 4(${A})(${C})`;
+            
+            // Mostrar evaluación
+            document.getElementById('evaluacion').textContent = 
+                `f(${xEval}) = ${yEval.toFixed(3)}`;
+            
+            document.getElementById('evaluationResult').textContent = 
+                `Resultado: f(${xEval}) = ${yEval.toFixed(3)}`;
+            
+            // Mostrar vértice
+            document.getElementById('vertice').textContent = 
+                `(${Vpx.toFixed(3)}, ${Vpy.toFixed(3)})`;
+            
+            // Mostrar soluciones reales
+            if (raices.tieneReales) {
+                document.getElementById('solucionesReales').innerHTML = 
+                    `x₁ = ${raices.real1.toFixed(5)}<br>x₂ = ${raices.real2.toFixed(5)}`;
+                document.getElementById('solucionesComplejas').textContent = "No tiene";
+            } else {
+                document.getElementById('solucionesReales').textContent = "No tiene";
+                
+                // Mostrar soluciones complejas
+                const real1 = raices.compleja1.real.toFixed(5);
+                const imag1 = Math.abs(raices.compleja1.imag).toFixed(5);
+                const real2 = raices.compleja2.real.toFixed(5);
+                const imag2 = Math.abs(raices.compleja2.imag).toFixed(5);
+                
+                document.getElementById('solucionesComplejas').innerHTML = 
+                    `x₁ = ${real1} + ${imag1}i<br>x₂ = ${real2} - ${imag2}i`;
+            }
+            
+            // Mostrar la sustitución en la fórmula del estudiante
+            const sqrtD = Math.sqrt(Math.abs(D)).toFixed(3);
+            let formulaHTML = '';
+            
+            if (D >= 0) {
+                formulaHTML = `
+                    x = (-${B} ± √(${B}² - 4·${A}·${C})) / (2·${A})<br>
+                    x = (-${B} ± √(${B*B} - ${4*A*C})) / ${2*A}<br>
+                    x = (-${B} ± √${D}) / ${2*A}<br>
+                    x = (-${B} ± ${sqrtD}) / ${2*A}<br>
+                    x₁ = (-${B} + ${sqrtD}) / ${2*A} = ${raices.real1.toFixed(3)}<br>
+                    x₂ = (-${B} - ${sqrtD}) / ${2*A} = ${raices.real2.toFixed(3)}
+                `;
+            } else {
+                formulaHTML = `
+                    x = (-${B} ± √(${B}² - 4·${A}·${C})) / (2·${A})<br>
+                    x = (-${B} ± √(${B*B} - ${4*A*C})) / ${2*A}<br>
+                    x = (-${B} ± √${D}) / ${2*A}<br>
+                    x = (-${B} ± ${sqrtD}i) / ${2*A}<br>
+                    x₁ = (-${B} + ${sqrtD}i) / ${2*A} = ${real1} + ${imag1}i<br>
+                    x₂ = (-${B} - ${sqrtD}i) / ${2*A} = ${real2} - ${imag2}i
+                `;
+            }
+            
+            document.getElementById('formulaEstudiante').innerHTML = formulaHTML;
+        }
+        
+        // Función para actualizar todo
+        function actualizarTodo() {
+            actualizarGrafica();
+            actualizarResultados();
+        }
+        
+        // Agregar event listeners a los controles
+        document.getElementById('coefA').addEventListener('input', actualizarTodo);
+        document.getElementById('coefB').addEventListener('input', actualizarTodo);
+        document.getElementById('coefC').addEventListener('input', actualizarTodo);
+        document.getElementById('minX').addEventListener('input', actualizarTodo);
+        document.getElementById('maxX').addEventListener('input', actualizarTodo);
+        document.getElementById('evalX').addEventListener('input', actualizarTodo);
+        
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', actualizarTodo);
+    </script>
+</body>
+</html>
